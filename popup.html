@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1.0" />
+<title>Kids' Curiosity Browser</title>
+<link rel="stylesheet" href="popup.css" />
+</head>
+<body>
+<div class="container">
+    <h2 class="title">Kids' Curiosity Browser</h2>
+
+    <!-- Explain for Kids -->
+    <section class="card">
+    <h3>📖 Explain for Kids</h3>
+    <label for="reading-level">Reading Level</label>
+    <div class="level-slider">
+        <input type="range" id="reading-level" min="0" max="2" step="1" value="0" />
+        <div class="levels">
+        <span>Simple</span>
+        <span>Intermediate</span>
+        <span>Advanced</span>
+        </div>
+    </div>
+    <button id="rewriteBtn">Rewrite Page</button>
+    </section>
+
+    <!-- Language Translation -->
+    <section class="card">
+    <h3>🌐 Language Translation</h3>
+    <select id="languageSelect">
+        <option value="en">English</option>
+        <option value="es">Spanish</option>
+        <option value="fr">French</option>
+        <option value="de">German</option>
+        <option value="ja">Japanese</option>
+    </select>
+    <button id="translateBtn">Translate Page</button>
+    </section>
+
+    <!-- Safe Mode -->
+    <section class="card">
+    <h3>🛡️ Safe Mode</h3>
+    <label class="switch">
+        <input type="checkbox" id="kidsMode" />
+        <span class="slider"></span>
+    </label>
+    <p class="note">Kids Mode: Filter content and enable safe browsing</p>
+    </section>
+
+    <button id="openLearningPanel" class="panel-btn">Open Learning Panel</button>
+</div>
+
+<script src="popup.js"></script>
+</body>
+</html>
