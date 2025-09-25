@@ -1,0 +1,33 @@
+#kids-progress-box {
+    position: fixed;
+    bottom: 20px;
+    right: 20px;
+    background: #fff;
+    border: 2px solid #4CAF50;
+    border-radius: 12px;
+    padding: 10px;
+    font-family: Arial, sans-serif;
+    font-size: 14px;
+    z-index: 999999;
+    width: 250px;
+    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+}
+
+#kids-progress-text {
+    margin-bottom: 6px;
+}
+
+.bar-container {
+    width: 100%;
+    background: #ddd;
+    border-radius: 8px;
+    overflow: hidden;
+    margin-top: 5px;
+}
+
+#kids-progress-bar {
+    width: 0%;
+    height: 12px;
+    background: #4CAF50;
+    transition: width 0.2s ease-in-out;
+}

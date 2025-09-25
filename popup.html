@@ -11,32 +11,65 @@
     <h2 class="title">Kids' Curiosity Browser</h2>
 
     <!-- Explain for Kids -->
-    <section class="card">
+<section class="card">
     <h3>📖 Explain for Kids</h3>
-    <label for="reading-level">Reading Level</label>
-    <div class="level-slider">
-        <input type="range" id="reading-level" min="0" max="2" step="1" value="0" />
-        <div class="levels">
-        <span>Simple</span>
-        <span>Intermediate</span>
-        <span>Advanced</span>
-        </div>
-    </div>
-    <button id="rewriteBtn">Rewrite Page</button>
-    </section>
 
-    <!-- Language Translation -->
+    <div class="level-header">
+    <label for="reading-level">Reading Level</label>
+    <span id="level-label" class="level-label">Simple</span>
+    </div>
+
+    <div class="level-slider">
+    <input type="range" id="reading-level" min="0" max="2" step="1" value="0" />
+    </div>
+
+    <div class="levels">
+    <span>Simple</span>
+    <span>Intermediate</span>
+    <span>Advanced</span>
+    </div>
+
+    <button id="rewriteBtn">Rewrite Page</button>
+</section>
+
+
     <section class="card">
-    <h3>🌐 Language Translation</h3>
-    <select id="languageSelect">
-        <option value="en">English</option>
-        <option value="es">Spanish</option>
-        <option value="fr">French</option>
-        <option value="de">German</option>
-        <option value="ja">Japanese</option>
-    </select>
-    <button id="translateBtn">Translate Page</button>
+        <h3>🌐 Language Translation</h3>
+    
+        <div class="lang-translation-group">
+        <!-- Dropdown -->
+        <div class="custom-dropdown" id="languageDropdown">
+            <span class="selected">English</span>
+            <ul class="options">
+            <li data-value="en">English</li>
+            <li data-value="es">Spanish</li>
+            <li data-value="fr">French</li>
+            <li data-value="de">German</li>
+            <li data-value="zh">Chinese (Simplified)</li>
+            <li data-value="zh-TW">Chinese (Traditional)</li>
+            <li data-value="ja">Japanese</li>
+            <li data-value="ko">Korean</li>
+            <li data-value="hi">Hindi</li>
+            <li data-value="ar">Arabic</li>
+            <li data-value="pt">Portuguese</li>
+            <li data-value="ru">Russian</li>
+            <li data-value="it">Italian</li>
+            <li data-value="nl">Dutch</li>
+            <li data-value="tr">Turkish</li>
+            <li data-value="pl">Polish</li>
+            <li data-value="sv">Swedish</li>
+            <li data-value="uk">Ukrainian</li>
+            <li data-value="vi">Vietnamese</li>
+            <li data-value="th">Thai</li>
+            </ul>
+        </div>
+    
+        <!-- Button -->
+        <button id="translateBtn" class="translate-btn">Translate Page</button>
+        </div>
     </section>
+    
+
 
     <!-- Safe Mode -->
     <section class="card">
@@ -51,6 +84,6 @@
     <button id="openLearningPanel" class="panel-btn">Open Learning Panel</button>
 </div>
 
-<script src="popup.js"></script>
+<script type="module" src="popup.js"></script>
 </body>
 </html>
