@@ -1,0 +1,120 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<title>Learning Panel</title>
+<link rel="stylesheet" href="learningPanel.css">
+</head>
+<body>
+<div class="panel">
+    <!-- Header -->
+    <div class="header">
+    <h2>Learning Panel</h2>
+    </div>
+
+    <!-- Tabs -->
+    <div class="tabs">
+    <button class="tab-btn active" data-tab="overview">Overview</button>
+    <button class="tab-btn" data-tab="facts">Facts</button>
+    <button class="tab-btn" data-tab="quiz">Quiz</button>
+    </div>
+
+    <!-- Content -->
+    <div class="content">
+
+    <!-- Overview -->
+    <div class="tab-content" id="overview" style="display:block;">
+        <div class="card progress-card">
+            <h3>🏆 Your Progress</h3>
+        
+            <div class="progress-header">
+                <span class="level" id="level-label">Level 1</span>
+                <span class="points-badge" id="points-label">0 points</span>
+            </div>
+        
+            <div class="progress-bar">
+                <div class="progress-bar-fill" id="progress-fill"></div>
+            </div>
+        
+            <div class="progress-info">
+                <span id="progress-label">0%</span>
+                <span id="progress-remaining">0 points to go</span>
+            </div>
+        
+            <div class="badges">
+                <h4>Earned Badges</h4>
+                <div id="earnedBadges"></div>
+            </div>
+        </div>
+        
+
+        <div class="card">
+        <h3>Quick Actions</h3>
+        <button id="goFacts">Discover New Facts</button>
+        <button id="goQuiz">Take Quiz</button>
+        </div>
+
+        <div class="card">
+        <h3>Page Summary</h3>
+        <p>This page is about marine biology and ocean creatures. Perfect for learning about sea animals!</p>
+        </div>
+    </div>
+
+
+    <div class="tab-content" id="facts">
+        <!-- Normal Facts View -->
+        <div id="factsNormalView" class="facts-view">
+            <div class="card">
+                <h3>Amazing Facts</h3>
+                <p id="currentFact">✨ Generating fun fact…</p>
+                <button id="newFact">Another Fun Fact</button>
+            </div>
+    
+            <div class="card">
+                <h3> Facts Collection</h3>
+                <div id="factCollection"></div>
+                <button id="viewAllFacts" class="viewFacts">View All Facts</button>
+            </div>
+        </div>
+    
+        <!-- Full Facts View -->
+        <div id="factsFullView" class="facts-view" style="display:none;">
+            <button class="backToFacts">Back</button>
+            <div class="card">
+                <h3>All Facts</h3>
+                <div id="allFactsList"></div>
+            </div>
+        </div>
+    </div>
+    
+
+    <!-- Quiz -->
+    <div class="tab-content" id="quiz">
+    <!-- Normal Quiz View -->
+    <div id="quizNormalView" class="quiz-view">
+        <div class="card" id="quizCard">
+            <h3>Learning Quiz</h3>
+            <div id="quizContent"></div>
+        </div>
+
+        <div class="card">
+            <h3>Your Quiz Collection</h3>
+            <div id="quizCollection"></div>
+            <button id="viewAllQuestions" class="viewQuestions">View All Questions</button>
+        </div>
+    </div>
+
+    <!-- Full Quiz View -->
+    <div id="quizFullView" class="quiz-view" style="display:none;">
+        <button class="backToQuiz">Back</button>
+        <div class="card">
+            <h3>All Questions</h3>
+            <div id="allQuizList"></div>
+        </div>
+    </div>
+    </div>
+</div>
+
+<script src="learningPanel.js"></script>
+</body>
+</html>

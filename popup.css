@@ -1,10 +1,10 @@
 body {
     font-family: Arial, sans-serif;
-    background: #fff;
+    background: #FDF4E3; /* Cream background */
     margin: 0;
     padding: 12px;
     width: 320px;
-    color: #222;
+    color: #134686; /* Navy text */
 }
 
 .container {
@@ -17,33 +17,20 @@ body {
     text-align: center;
     font-size: 16px;
     margin: 0 0 8px 0;
+    color: #134686;
 }
 
 .card {
-    border: 1px solid #eee;
+    border: 1px solid #FEB21A; /* Yellow border */
     border-radius: 10px;
     padding: 12px;
-    background: #fafafa;
+    background: #fff;
 }
 
 .card h3 {
     margin: 0 0 8px 0;
     font-size: 14px;
-}
-
-button {
-    background: #111;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 8px;
-    font-size: 13px;
-    width: 100%;
-    cursor: pointer;
-}
-
-button:hover {
-    background: #333;
+    color: #134686; /* Navy heading */
 }
 
 select {
@@ -51,7 +38,7 @@ select {
     padding: 6px;
     margin-bottom: 8px;
     border-radius: 6px;
-    border: 1px solid #ddd;
+    border: 1px solid #FEB21A;
 }
 
 .level-header {
@@ -64,12 +51,11 @@ select {
 .level-label {
     font-size: 12px;
     font-weight: bold;
-    color: #444;
-    background: #f2f2f2;
+    color: #134686;
+    background: #FEB21A;
     padding: 2px 8px;
     border-radius: 6px;
 }
-
 
 input[type="range"] {
     width: 100%;
@@ -81,20 +67,7 @@ input[type="range"] {
     font-size: 11px;
     margin-top: 4px;
     margin-bottom: 8px;
-}
-
-/* Toggle Switch */
-.switch {
-    position: relative;
-    display: inline-block;
-    width: 44px;
-    height: 22px;
-}
-
-.switch input {
-    opacity: 0;
-    width: 0;
-    height: 0;
+    color: #134686;
 }
 
 .slider {
@@ -122,7 +95,7 @@ input[type="range"] {
 }
 
 input:checked + .slider {
-    background-color: #4CAF50;
+    background-color: #134686; /* Navy toggle on */
 }
 
 input:checked + .slider:before {
@@ -143,13 +116,13 @@ input:checked + .slider:before {
 .lang-translation-group {
     display: flex;
     flex-direction: column;
-    gap: 8px; /* spacing between dropdown and button */
+    gap: 8px;
 }
 
 /* Custom Dropdown */
 .custom-dropdown {
     position: relative;
-    border: 1px solid #ddd;
+    border: 1px solid #FEB21A;
     border-radius: 6px;
     padding: 10px;
     background: #fff;
@@ -159,13 +132,14 @@ input:checked + .slider:before {
     text-align: left;
     width: 100%;
     box-sizing: border-box;
+    color: #134686;
 }
 
 /* ▼ Arrow */
 .custom-dropdown::after {
     content: "▼";
     font-size: 10px;
-    color: #666;
+    color: #134686;
     position: absolute;
     right: 10px;
     top: 50%;
@@ -185,9 +159,9 @@ input:checked + .slider:before {
     top: 100%;
     left: 0;
     right: 0;
-    max-height: 120px;   /* show ~5 items */
+    max-height: 120px;
     overflow-y: auto;
-    border: 1px solid #ddd;
+    border: 1px solid #FEB21A;
     border-radius: 6px;
     background: #fff;
     z-index: 10;
@@ -204,15 +178,16 @@ input:checked + .slider:before {
     padding: 8px 10px;
     font-size: 13px;
     cursor: pointer;
-    font-weight: normal;
+    color: #134686;
 }
 
 .custom-dropdown .options li:hover {
-    background: #eee;
+    background: #FDF4E3; /* cream highlight */
 }
 
 .custom-dropdown .options li.selected {
-    background: #eee;
+    background: #FEB21A;
+    color: #134686;
     position: relative;
 }
 
@@ -220,13 +195,13 @@ input:checked + .slider:before {
     content: "✓";
     position: absolute;
     right: 10px;
-    color: #111;
+    color: #134686;
     font-size: 13px;
 }
 
-/* Translate button styling to match */
+/* Translate button */
 .translate-btn {
-    background: #111;
+    background: #ED3F27; /* Red */
     color: #fff;
     border: none;
     border-radius: 6px;
@@ -238,5 +213,31 @@ input:checked + .slider:before {
 }
 
 .translate-btn:hover {
-    background: #333;
+    background: #134686; /* Navy hover */
+}
+
+.quick-learning {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.funFactsBtn, .quizBtn {
+    background: #FEB21A; /* Yellow */
+    color: #134686;
+}
+
+button {
+    background: #ED3F27; /* Red */
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 13px;
+    width: 100%;
+    cursor: pointer;
+}
+
+button:hover {
+    background: #134686; /* Navy hover */
 }

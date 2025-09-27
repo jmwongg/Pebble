@@ -90,3 +90,50 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 });
 
+document.getElementById("openLearningPanel").addEventListener("click", async () => {
+    // Get the active tab in the current window.
+    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+
+    // If there's no active tab, stop the function.
+    if (!activeTab) return;
+
+    // Open and enable the side panel for the active tab.
+    // The side panel will automatically close in other tabs.
+    await chrome.sidePanel.setOptions({
+    tabId: activeTab.id,
+    path: "learningPanel.html",
+    enabled: true
+    });
+
+    // Open the side panel.
+    await chrome.sidePanel.open({ tabId: activeTab.id });
+    window.close();
+});
+
+document.getElementById("funFactsBtn").addEventListener("click", async () => {
+    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!activeTab) return;
+
+    await chrome.sidePanel.setOptions({
+        tabId: activeTab.id,
+        path: "learningPanel.html#facts",
+        enabled: true
+    });
+
+    await chrome.sidePanel.open({ tabId: activeTab.id });
+    window.close();
+});
+
+document.getElementById("quizBtn").addEventListener("click", async () => {
+    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    if (!activeTab) return;
+
+    await chrome.sidePanel.setOptions({
+        tabId: activeTab.id,
+        path: "learningPanel.html#quiz", 
+        enabled: true
+    });
+
+    await chrome.sidePanel.open({ tabId: activeTab.id });
+    window.close();
+});

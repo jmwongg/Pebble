@@ -171,22 +171,23 @@ async function rewritePage(level) {
     return;
     }
 
-    // ✅ Age-specific contexts
+    // ✅ Age-specific contexts with SAFE MODE
     let sharedContext, perChunkContext;
     switch (parseInt(level)) {
-    case 0: // Simple (7-9 yo)
-        sharedContext = "Rewrite text so it is very simple, short, and easy to read for kids aged 7-9. Use basic words and short sentences.";
-        perChunkContext = "Make this sentence short, simple, and understandable for 7-9 year olds.";
-        break;
-    case 1: // Intermediate (9-11 yo)
-        sharedContext = "Rewrite text so it is clear and easy to understand for kids aged 9-11. Use simple words but allow slightly longer sentences.";
-        perChunkContext = "Make this text suitable for 9-11 year olds, clear but with a bit more detail.";
-        break;
-    case 2: // Advanced (11+)
-        sharedContext = "Rewrite text so it is understandable for kids 11 and older. Keep it clear but allow longer sentences and richer vocabulary.";
-        perChunkContext = "Make this text clear for 11+ year olds, with slightly more advanced vocabulary.";
-        break;
+        case 0: // Simple (7-9 yo)
+            sharedContext = "Rewrite the text so it is very simple, short, and easy to read for kids aged 7-9. Use basic words and short sentences. Remove all violence, adult content, offensive language, or any inappropriate content. Make the text safe for children.";
+            perChunkContext = "Rewrite this sentence to be short, simple, and completely safe for 7-9 year olds. Remove any violence, adult content, or inappropriate words.";
+            break;
+        case 1: // Intermediate (9-11 yo)
+            sharedContext = "Rewrite the text so it is clear and easy to understand for kids aged 9-11. Use simple words but allow slightly longer sentences. Remove all violence, adult content, offensive language, or any inappropriate content. Make the text safe for children.";
+            perChunkContext = "Rewrite this text for 9-11 year olds, making it clear, slightly detailed, and completely safe. Remove any violence, adult content, or inappropriate words.";
+            break;
+        case 2: // Advanced (11+)
+            sharedContext = "Rewrite the text so it is understandable for kids 11 and older. Keep it clear, allow longer sentences, and richer vocabulary. Remove all violence, adult content, offensive language, or any inappropriate content. Ensure the text is safe for children.";
+            perChunkContext = "Rewrite this text for 11+ year olds, making it clear and safe. Remove any violence, adult content, or inappropriate words.";
+            break;
     }
+
 
     // ✅ Create ONE rewriter instance
     const rewriter = await Rewriter.create({
