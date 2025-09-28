@@ -130,7 +130,7 @@ document.getElementById("quizBtn").addEventListener("click", async () => {
 
     await chrome.sidePanel.setOptions({
         tabId: activeTab.id,
-        path: "learningPanel.html#quiz", 
+        path: "learningPanel.html#quiz",
         enabled: true
     });
 
@@ -138,3 +138,14 @@ document.getElementById("quizBtn").addEventListener("click", async () => {
     window.close();
 });
 
+// Restore to default
+document.addEventListener("DOMContentLoaded", () => {
+    const restoreBtn = document.querySelector(".restoreToDefault");
+
+    restoreBtn.addEventListener("click", () => {
+        sendMessageToTab({ action: "restorePage" });
+        window.close();
+    });
+    });
+
+    

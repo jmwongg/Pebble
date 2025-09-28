@@ -110,9 +110,6 @@ input:checked + .slider:before {
     margin-top: 6px;
 }
 
-.panel-btn {
-    margin-top: 4px;
-}
 
 /* Container for dropdown + button */
 .lang-translation-group {
@@ -237,21 +234,8 @@ button:hover {
     background: #FDF4E3;
 }
 
-.restoreToDefault {
-    background: #fff;
-    color: #134686;
-    border: 1px solid #134686;
-    border-radius: 8px;
-    padding: 8px;
-    font-size: 13px;
-    width: 100%;
-    cursor: pointer;
-    margin-bottom: 10px;
-    transition: all 0.2s ease;
-}
-
-.restoreToDefault:hover {
-    background: #134686;
-    color: #fff;
-    box-shadow: 0 4px 8px rgba(0,0,0,0.2);
+.panelAndRestore {
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
 }

@@ -69,6 +69,7 @@ async function collectTranslationNodes() {
 }
 // === Translate page with caching + batching ===
 async function translatePage(targetLanguage) {
+    saveOriginalContent();
     if (!("Translator" in self) || !("LanguageDetector" in self)) {
         console.error("Translator API not supported in this browser.");
         return;
@@ -173,6 +174,7 @@ async function collectRewriteNodes() {
 
 // === Rewrite with caching + batching ===
 async function rewritePage(level) {
+    saveOriginalContent();
     if (!("Rewriter" in self)) {
         console.error("❌ Rewriter API not supported in this browser.");
         return;
@@ -270,4 +272,39 @@ chrome.runtime.onMessage.addListener((msg) => {
     if (msg.action === "rewriteContent") {
         rewritePage(msg.level);
     }
+    if (msg.action === "restorePage") {
+        restoreOriginalContent();
+    }
 });
+
+
+function saveOriginalContent() {
+    const selectors = "p, h1, h2, h3, h4, h5, h6, li, figcaption, blockquote";
+    const elements = document.querySelectorAll(selectors);
+
+    elements.forEach(el => {
+    if (!el.hasAttribute("data-original-html")) {
+        el.setAttribute("data-original-html", el.innerHTML);
+    }
+    });
+
+    // Also for text nodes (rewrite case)
+    const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
+    let node;
+    while ((node = walker.nextNode())) {
+    if (node.nodeValue.trim().length > 0 && !node.parentNode.hasAttribute("data-original-html")) {
+        node.parentNode.setAttribute("data-original-html", node.parentNode.innerHTML);
+    }
+    }
+    console.log("Original content saved.")
+}
+
+function restoreOriginalContent() {
+    const elements = document.querySelectorAll("[data-original-html]");
+    elements.forEach(el => {
+    el.innerHTML = el.getAttribute("data-original-html");
+    el.removeAttribute("data-original-html"); 
+    });
+    console.log("Original content restored.")
+    
+}
