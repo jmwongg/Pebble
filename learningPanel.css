@@ -110,21 +110,6 @@ button:hover {
     color: black;
 }
 
-#summarizeBtn {
-    background: #134686;
-    color: #fff;
-    border: none;
-    border-radius: 8px;
-    padding: 8px;
-    font-size: 13px;
-    cursor: pointer;
-    width: 100%;
-}
-
-#summarizeBtn:hover {
-    background: #0f3566;
-}
-
 .progress-card {
     background: white;
     border-radius: 12px;
