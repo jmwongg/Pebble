@@ -137,3 +137,4 @@ document.getElementById("quizBtn").addEventListener("click", async () => {
     await chrome.sidePanel.open({ tabId: activeTab.id });
     window.close();
 });
+

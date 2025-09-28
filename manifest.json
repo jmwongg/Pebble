@@ -15,7 +15,8 @@
         "scripting",
         "activeTab",
         "tabs",
-        "sidePanel"
+        "sidePanel",
+        "storage"
         ],
     "action": {
         "default_popup": "popup.html",
@@ -33,7 +34,8 @@
         {
         "matches": ["<all_urls>"],
         "js": ["content.js"],
-        "css": ["progress.css"]
+        "css": ["progress.css"],
+        "all_frames": false
         }
     ],
     "host_permissions": ["<all_urls>"],

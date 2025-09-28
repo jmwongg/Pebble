@@ -110,6 +110,21 @@ button:hover {
     color: black;
 }
 
+#summarizeBtn {
+    background: #134686;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 8px;
+    font-size: 13px;
+    cursor: pointer;
+    width: 100%;
+}
+
+#summarizeBtn:hover {
+    background: #0f3566;
+}
+
 .progress-card {
     background: white;
     border-radius: 12px;
@@ -185,8 +200,6 @@ button:hover {
     color: #333;
     box-shadow: 0 1px 3px rgba(0,0,0,0.08);
 }
-
-
 
 .fact-card, .quiz-card {
     background: rgba(254, 178, 26, 0.15); /* subtle yellow tint */
