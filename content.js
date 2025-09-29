@@ -1,15 +1,18 @@
-// === Cached model instances ===
+// Cached model instances
 let cachedTranslators = new Map();
 let cachedRewriters = new Map();
 
-// === Create progress UI (unchanged) ===
+// Create progress UI
 function createProgressUI() {
     let box = document.getElementById("kids-progress-box");
     if (!box) {
         box = document.createElement("div");
         box.id = "kids-progress-box";
         box.innerHTML = `
-            <div id="kids-progress-text">Preparing translation…</div>
+            <div class="progress-header">
+                <span id="kids-progress-stage">Preparing translation…</span>
+                <span id="kids-progress-pct">0%</span>
+            </div>
             <div class="bar-container">
                 <div id="kids-progress-bar"></div>
             </div>
@@ -17,12 +20,13 @@ function createProgressUI() {
         document.body.appendChild(box);
     }
 }
-
 function updateProgressUI(stage, pct) {
-    const text = document.getElementById("kids-progress-text");
+    const text = document.getElementById("kids-progress-stage");
     const bar = document.getElementById("kids-progress-bar");
+    const pctEl = document.getElementById("kids-progress-pct");
     if (text) text.textContent = stage;
     if (bar && pct !== null) bar.style.width = pct + "%";
+    if (pctEl && pct !== null) pctEl.textContent = pct + "%";
 }
 
 function removeProgressUI() {
@@ -30,29 +34,36 @@ function removeProgressUI() {
     if (box) box.remove();
 }
 
+// Skip translating or rewriting some elements
 function shouldSkipElement(el) {
     if (!el) return false;
-    const tag = el.tagName?.toLowerCase() || "";
-    const id = el.id?.toLowerCase() || "";
-    const cls = el.className?.toLowerCase() || "";
 
-    return (
-        tag === "footer" ||
-        id.includes("footer") ||
-        cls.includes("footer") ||
-        id.includes("banner") ||
-        cls.includes("banner") ||
-        id.includes("ad") ||
-        cls.includes("ad") ||
-        id.includes("advert") ||
-        cls.includes("advert") ||
-        id.includes("sponsored") ||
-        cls.includes("sponsored")
-    );
+    const tag = (el.tagName || "").toString().toLowerCase();
+    const id = (el.id || "").toString().toLowerCase();
+
+    let cls = "";
+    if (typeof el.className === "string") {
+        cls = el.className.toLowerCase();
+    } else if (el.className?.baseVal) {
+        cls = el.className.baseVal.toLowerCase();
+    }
+
+    // Common sections to skip
+    const skipKeywords = [
+        "footer", "banner", "ad", "advert", "sponsored",
+        "sidebar", "comments", "related", "newsletter",
+        "popup", "modal", "cookie", "consent", "nav"
+    ];
+
+    // Direct tag skip
+    if (["footer", "nav", "aside"].includes(tag)) return true;
+
+    // Keyword match on id/class
+    return skipKeywords.some(kw => id.includes(kw) || cls.includes(kw));
 }
 
 
-// === Collect translation nodes (unchanged) ===
+// Collect translation nodes
 async function collectTranslationNodes() {
     const selectors = "p, h1, h2, h3, h4, h5, h6, li, figcaption, blockquote";
     const elements = document.querySelectorAll(selectors);
@@ -67,7 +78,7 @@ async function collectTranslationNodes() {
     });
     return chunks;
 }
-// === Translate page with caching + batching ===
+// Translate page with caching + batching
 async function translatePage(targetLanguage) {
     saveOriginalContent();
     if (!("Translator" in self) || !("LanguageDetector" in self)) {
@@ -76,7 +87,7 @@ async function translatePage(targetLanguage) {
     }
 
     createProgressUI();
-    updateProgressUI("⏳ Detecting language…", 0);
+    updateProgressUI("Detecting language…", 0);
 
     const chunks = await collectTranslationNodes();
     if (chunks.length === 0) {
@@ -89,6 +100,12 @@ async function translatePage(targetLanguage) {
     const { detectedLanguage } = (await detector.detect(chunks[0].text))[0];
     console.log(`Detected language: ${detectedLanguage} → ${targetLanguage}`);
 
+    if (detectedLanguage === targetLanguage) {
+        updateProgressUI("Page already in target language", 100);
+        setTimeout(removeProgressUI, 2000);
+        return;
+    }
+
     // Reuse cached translator if available
     const key = `${detectedLanguage}-${targetLanguage}`;
 
@@ -99,7 +116,7 @@ async function translatePage(targetLanguage) {
         });
 
         if (availability === "unavailable") {
-            updateProgressUI("❌ Language pair not supported", 100);
+            updateProgressUI("Language pair not supported", 100);
             return;
         }
 
@@ -109,7 +126,7 @@ async function translatePage(targetLanguage) {
             monitor(m) {
                 m.addEventListener("downloadprogress", (e) => {
                     const pct = Math.round(e.loaded * 100);
-                    updateProgressUI(`⏳ Downloading model… ${pct}%`, pct);
+                    updateProgressUI(`Downloading model…`, pct);
                 });
             },
         });
@@ -118,7 +135,7 @@ async function translatePage(targetLanguage) {
     }
 
     const translator = cachedTranslators.get(key);
-    updateProgressUI("✅ Model ready! Translating…", 0);
+    updateProgressUI("Model ready! Translating…", 0);
 
     // Batch translation (5 at a time)
     const batchSize = 5;
@@ -137,15 +154,14 @@ async function translatePage(targetLanguage) {
         }
 
         const pct = Math.round(((i + batchSize) / chunks.length) * 100);
-        updateProgressUI(`🔄 Translating… ${pct}%`, pct);
+        updateProgressUI(`Translating…`, pct);
     }
 
-    updateProgressUI("✅ Translation complete!", 100);
+    updateProgressUI("Translation complete!", 100);
     setTimeout(removeProgressUI, 2000);
 }
 
-
-// === Collect rewrite nodes (unchanged) ===
+// Collect rewrite nodes
 async function collectRewriteNodes() {
     const walker = document.createTreeWalker(document.body, NodeFilter.SHOW_TEXT, null, false);
     const nodes = [];
@@ -172,44 +188,44 @@ async function collectRewriteNodes() {
     return nodes;
 }
 
-// === Rewrite with caching + batching ===
+// Rewrite with caching + batching
 async function rewritePage(level) {
     saveOriginalContent();
     if (!("Rewriter" in self)) {
-        console.error("❌ Rewriter API not supported in this browser.");
+        console.error("Rewriter API not supported in this browser.");
         return;
     }
 
     const availability = await Rewriter.availability();
     if (availability === "unavailable") {
-        console.error("❌ Rewriter API is unavailable.");
+        console.error("Rewriter API is unavailable.");
         return;
     }
 
     createProgressUI();
-    updateProgressUI("🔄 Collecting text…", 5);
+    updateProgressUI("Collecting text…", 5);
 
     const chunks = await collectRewriteNodes();
     if (chunks.length === 0) {
-        updateProgressUI("⚠️ No text found.", 100);
+        updateProgressUI("No text found.", 100);
         setTimeout(removeProgressUI, 2000);
         return;
     }
 
-    // Pick contexts based on level (unchanged)
+    // Pick contexts based on level
     let sharedContext, perChunkContext;
     switch (parseInt(level)) {
         case 0:
-            sharedContext = "Rewrite text for 7-9 year olds: simple, short, safe.";
-            perChunkContext = "Rewrite this text short and safe for 7-9 year olds.";
+            sharedContext = "Rewrite text for 7-9 year olds: simple, short, safe, and kid-friendly. Rephrase content naturally so that any violent, sexual, or adult ideas are expressed in a safe, age-appropriate way without losing the main meaning. Remove explicit details from harmful or sensitive content. Replace strong words with gentler ones.";
+            perChunkContext = "Rewrite this text for 7-9 year olds: short, safe, and kid-friendly. Rephrase any violent, sexual, or adult ideas in a safe way, keeping the original meaning clear.";
             break;
         case 1:
-            sharedContext = "Rewrite text for 9-11 year olds: clear, simple, safe.";
-            perChunkContext = "Rewrite this text clear and safe for 9-11 year olds.";
+            sharedContext = "Rewrite text for 9-11 year olds: clear, simple, safe, and kid-friendly. Express any sensitive content in an age-appropriate way while preserving the main meaning of the text. Remove explicit details from harmful or sensitive content. Replace strong words with gentler ones.";
+            perChunkContext = "Rewrite this text for 9-11 year olds: clear, safe, and kid-friendly. Rephrase sensitive ideas so they are appropriate for kids, without losing meaning.";
             break;
         case 2:
-            sharedContext = "Rewrite text for 11+ year olds: clear, slightly detailed, safe.";
-            perChunkContext = "Rewrite this text clear and safe for 11+ year olds.";
+            sharedContext = "Rewrite text for 11+ year olds: clear, slightly detailed, safe, and kid-friendly. Rephrase content naturally so violent, sexual, or adult ideas are expressed in a way that is safe but informative.";
+            perChunkContext = "Rewrite this text for 11+ year olds: clear, slightly detailed, and safe. Rephrase sensitive content naturally so the meaning stays intact.";
             break;
     }
 
@@ -222,18 +238,15 @@ async function rewritePage(level) {
             sharedContext,
             monitor(m) {
                 m.addEventListener("downloadprogress", e => {
-                    updateProgressUI(
-                        `📥 Downloading model… ${Math.round(e.loaded * 100)}%`,
-                        e.loaded * 100
-                    );
+                    updateProgressUI(`Downloading model…`, e.loaded * 100);
                 });
             }
         });
         cachedRewriters.set(level, rewriter);
     }
     const rewriter = cachedRewriters.get(level);
-
-    console.log(`✍️ Rewriting for reading level ${level}`);
+    const levelLabels = ["Simple", "Intermediate", "Advanced"];
+    console.log(`Rewriting for reading level: ${levelLabels[level]}`);
 
     // Process in batches but stream inside each batch
     const batchSize = 5;
@@ -257,26 +270,12 @@ async function rewritePage(level) {
         }));
 
         const pct = Math.round(((i + batchSize) / chunks.length) * 100);
-        updateProgressUI(`✍️ Rewriting… ${pct}%`, pct);
+        updateProgressUI(`Rewriting…`, pct);
     }
 
-    updateProgressUI("✅ Rewrite complete!", 100);
+    updateProgressUI("Rewrite complete!", 100);
     setTimeout(removeProgressUI, 2000);
-}  
-
-// === Listen for messages ===
-chrome.runtime.onMessage.addListener((msg) => {
-    if (msg.action === "translateContent") {
-        translatePage(msg.lang);
-    }
-    if (msg.action === "rewriteContent") {
-        rewritePage(msg.level);
-    }
-    if (msg.action === "restorePage") {
-        restoreOriginalContent();
-    }
-});
-
+}
 
 function saveOriginalContent() {
     const selectors = "p, h1, h2, h3, h4, h5, h6, li, figcaption, blockquote";
@@ -303,8 +302,22 @@ function restoreOriginalContent() {
     const elements = document.querySelectorAll("[data-original-html]");
     elements.forEach(el => {
     el.innerHTML = el.getAttribute("data-original-html");
-    el.removeAttribute("data-original-html"); 
+    el.removeAttribute("data-original-html");
     });
     console.log("Original content restored.")
     
 }
+
+// Listen for messages
+chrome.runtime.onMessage.addListener((msg) => {
+    if (msg.action === "translateContent") {
+        translatePage(msg.lang);
+    }
+    if (msg.action === "rewriteContent") {
+        rewritePage(msg.level);
+    }
+    if (msg.action === "restorePage") {
+        restoreOriginalContent();
+    }
+});
+

@@ -7,7 +7,6 @@
     --font-size: 14px;
 }
 
-
 body {
     margin: 0;
     font-family: Arial, sans-serif;
@@ -187,7 +186,7 @@ button:hover {
 }
 
 .fact-card, .quiz-card {
-    background: rgba(254, 178, 26, 0.15); /* subtle yellow tint */
+    background: rgba(254, 178, 26, 0.15);
     border: 1px solid var(--highlight);
     border-radius: 8px;
     padding: 12px;
@@ -202,16 +201,16 @@ button:hover {
 }
 
 .facts-view, .quiz-view {
-    flex: 1;             /* each mode takes full tab height */
+    flex: 1;
     display: flex;
     flex-direction: column;
 }
 
 #factsFullView, #quizFullView {
     display: none;
-    height: 100%;              /* full height of tab */
+    height: 100%;
     display: flex;
-    flex-direction: column;    /* stack items vertically */
+    flex-direction: column;
 }
 
 #allFactsList, #allQuizList {
@@ -224,8 +223,8 @@ button:hover {
 }
 
 .backToFacts,.backToQuiz {
-    margin-bottom: 10px;       /* spacing from heading/list */
-    align-self: flex-start;    /* keep button aligned left */
+    margin-bottom: 10px;
+    align-self: flex-start;
 }
 
 .viewFacts, .backToFacts, .viewQuestions, .backToQuiz{
@@ -239,8 +238,6 @@ button:hover {
     cursor: pointer;
 }
 
-
-/* Option buttons (yellow default) */
 .opt-btn {
     background: var(--highlight);
     color: black;
@@ -251,26 +248,22 @@ button:hover {
     cursor: pointer;
 }
 
-/* Hover turns red */
 .opt-btn:hover {
     background: var(--accent);
     color: white;
 }
 
-/* Selected state (JS will add .selected) */
 .opt-btn.selected {
     background: var(--accent);
     color: white;
 }
 
-/* Submit button (disabled state) */
 #submitAnswer:disabled {
-    background: #ccc;       /* Gray when disabled */
+    background: #ccc;
     color: #666;
     cursor: not-allowed;
 }
 
-/* Submit button (active matches red) */
 #submitAnswer {
     background: var(--accent);
     color: white;
@@ -284,6 +277,13 @@ button:hover {
 #correctText{
     color: green;
 }
+
 #keepLearningText{
-    color: orangered;
+    color: #ED3F27;
+}
+
+button i {
+    margin-right: 6px;
+    font-size: 14px;
+    vertical-align: middle;
 }

@@ -1,151 +1,120 @@
+// Send message to active tab
 async function sendMessageToTab(message) {
     const [tab] = await chrome.tabs.query({ active: true, currentWindow: true });
 
     // Inject content.js first if not already
     await chrome.scripting.executeScript({
-    target: { tabId: tab.id },
-    files: ["content.js"]
+        target: { tabId: tab.id },
+        files: ["content.js"]
     });
 
-    // Now send message
     chrome.tabs.sendMessage(tab.id, message);
 }
 
-// Language Translation
-document.addEventListener("DOMContentLoaded", () => {
-    const dropdown = document.getElementById("languageDropdown");
-    const selected = dropdown.querySelector(".selected");
-    const options = dropdown.querySelector(".options");
-    const translateBtn = document.getElementById("translateBtn");
-
-    // Toggle dropdown open/close
-    dropdown.addEventListener("click", () => {
-        dropdown.classList.toggle("open");
-    });
-
-    // Pick a language
-    options.querySelectorAll("li").forEach(option => {
-        option.addEventListener("click", (e) => {
-            e.stopPropagation(); // ✅ Prevent parent toggle from firing
-
-            // Remove previous selection highlight
-            options.querySelectorAll("li").forEach(opt => opt.classList.remove("selected"));
-
-            // Mark this one as selected
-            option.classList.add("selected");
-
-            // Update visible selected text
-            selected.textContent = option.textContent;
-
-            // Save value
-            dropdown.dataset.value = option.dataset.value;
-
-            // Close dropdown
-            dropdown.classList.remove("open");
-        });
-    });
-
-    // Translate button click
-    translateBtn.addEventListener("click", () => {
-        const lang = dropdown.dataset.value || "en"; // default English
-        sendMessageToTab({ action: "translateContent", lang });
-        window.close();
-    });
-
-    // Close dropdown when clicking outside
-    document.addEventListener("click", (e) => {
-        if (!dropdown.contains(e.target)) {
-            dropdown.classList.remove("open");
-        }
-    });
-});
-
- // === Rewrite Page ===
-document.addEventListener("DOMContentLoaded", () => {
-    const rewriteBtn = document.getElementById("rewriteBtn");
-    const levelSlider = document.getElementById("reading-level");
-
-    if (rewriteBtn && levelSlider) {
-    rewriteBtn.addEventListener("click", () => {
-        const level = document.getElementById("reading-level").value;
-        sendMessageToTab({ action: "rewriteContent", level });
-        window.close();
-
-    });
-    }
-
-    const slider = document.getElementById("reading-level");
-    const label = document.getElementById("level-label");
+function setupRewriteButton(sliderId, buttonId, labelId) {
+    const slider = document.getElementById(sliderId);
+    const label = document.getElementById(labelId);
+    const levels = ["Simple", "Intermediate", "Advanced"];
 
     if (slider && label) {
-        const levels = ["Simple", "Intermediate", "Advanced"];
-
-        // Set initial text
         label.textContent = levels[slider.value];
-
-        // Update live
         slider.addEventListener("input", () => {
-        label.textContent = levels[slider.value];
+            label.textContent = levels[slider.value];
         });
     }
-});
 
-document.getElementById("openLearningPanel").addEventListener("click", async () => {
-    // Get the active tab in the current window.
-    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+    const btn = document.getElementById(buttonId);
+    if (!btn) return;
 
-    // If there's no active tab, stop the function.
-    if (!activeTab) return;
+    btn.addEventListener("click", () => {
+        const level = slider ? slider.value : 0;
+        sendMessageToTab({ action: "rewriteContent", level });
+        window.close();
+    });
+}
 
-    // Open and enable the side panel for the active tab.
-    // The side panel will automatically close in other tabs.
-    await chrome.sidePanel.setOptions({
-    tabId: activeTab.id,
-    path: "learningPanel.html",
-    enabled: true
+function setupTranslationDropdown(dropdownId, buttonId) {
+    const dropdown = document.getElementById(dropdownId);
+    if (!dropdown) return;
+
+    const selected = dropdown.querySelector(".selected");
+    const options = dropdown.querySelector(".options");
+    const btn = document.getElementById(buttonId);
+
+    // Toggle dropdown
+    dropdown.addEventListener("click", () => dropdown.classList.toggle("open"));
+
+    // Select language
+    options.querySelectorAll("li").forEach(option => {
+        option.addEventListener("click", e => {
+            e.stopPropagation();
+            options.querySelectorAll("li").forEach(opt => opt.classList.remove("selected"));
+            option.classList.add("selected");
+            selected.textContent = option.textContent;
+            dropdown.dataset.value = option.dataset.value;
+            dropdown.classList.remove("open");
+        });
     });
 
-    // Open the side panel.
-    await chrome.sidePanel.open({ tabId: activeTab.id });
-    window.close();
-});
+    // Translate button
+    if (btn) {
+        btn.addEventListener("click", () => {
+            const lang = dropdown.dataset.value || "en"; // default English
+            sendMessageToTab({ action: "translateContent", lang });
+            window.close();
+        });
+    }
 
-document.getElementById("funFactsBtn").addEventListener("click", async () => {
-    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!activeTab) return;
-
-    await chrome.sidePanel.setOptions({
-        tabId: activeTab.id,
-        path: "learningPanel.html#facts",
-        enabled: true
+    // Close dropdown when clicking outside
+    document.addEventListener("click", e => {
+        if (!dropdown.contains(e.target)) dropdown.classList.remove("open");
     });
+}
 
-    await chrome.sidePanel.open({ tabId: activeTab.id });
-    window.close();
-});
+function setupSidePanelButton(buttonId, tabId = "overview") {
+    const btn = document.getElementById(buttonId);
+    if (!btn) return;
 
-document.getElementById("quizBtn").addEventListener("click", async () => {
-    const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
-    if (!activeTab) return;
+    btn.addEventListener("click", async () => {
+        const [activeTab] = await chrome.tabs.query({ active: true, currentWindow: true });
+        if (!activeTab) return;
 
-    await chrome.sidePanel.setOptions({
-        tabId: activeTab.id,
-        path: "learningPanel.html#quiz",
-        enabled: true
+        // Open side panel with the tab hash
+        const path = `learningPanel.html#${tabId}`;
+        await chrome.sidePanel.setOptions({
+            tabId: activeTab.id,
+            path,
+            enabled: true
+        });
+
+        await chrome.sidePanel.open({ tabId: activeTab.id });
+        window.close();
     });
+}
 
-    await chrome.sidePanel.open({ tabId: activeTab.id });
-    window.close();
-});
 
-// Restore to default
-document.addEventListener("DOMContentLoaded", () => {
-    const restoreBtn = document.querySelector(".restoreToDefault");
-
-    restoreBtn.addEventListener("click", () => {
+function setupRestoreButton(buttonClass) {
+    const btn = document.querySelector(`.${buttonClass}`);
+    if (!btn) return;
+    btn.addEventListener("click", () => {
         sendMessageToTab({ action: "restorePage" });
         window.close();
     });
-    });
+}
 
-    
+// DOMContentLoaded initialization
+document.addEventListener("DOMContentLoaded", () => {
+    // Rewrite
+    setupRewriteButton("reading-level", "rewriteBtn", "level-label");
+
+    // Translation
+    setupTranslationDropdown("languageDropdown", "translateBtn");
+
+    // Side panel
+    setupSidePanelButton("openLearningPanel");
+    setupSidePanelButton("funFactsBtn", "facts");
+    setupSidePanelButton("quizBtn", "quiz");
+
+    // Restore page
+    setupRestoreButton("restoreToDefault");
+});

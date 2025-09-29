@@ -1,10 +1,10 @@
 body {
     font-family: Arial, sans-serif;
-    background: #FDF4E3; /* Cream background */
+    background: #FDF4E3;
     margin: 0;
     padding: 12px;
     width: 320px;
-    color: #134686; /* Navy text */
+    color: #134686;
 }
 
 .container {
@@ -21,7 +21,7 @@ body {
 }
 
 .card {
-    border: 1px solid #FEB21A; /* Yellow border */
+    border: 1px solid #FEB21A;
     border-radius: 10px;
     padding: 12px;
     background: #fff;
@@ -30,7 +30,7 @@ body {
 .card h3 {
     margin: 0 0 8px 0;
     font-size: 14px;
-    color: #134686; /* Navy heading */
+    color: #134686;
 }
 
 select {
@@ -56,7 +56,6 @@ select {
     padding: 2px 8px;
     border-radius: 6px;
 }
-
 
 input[type="range"] {
     width: 100%;
@@ -97,7 +96,7 @@ input[type="range"] {
 }
 
 input:checked + .slider {
-    background-color: #134686; /* Navy toggle on */
+    background-color: #134686;
 }
 
 input:checked + .slider:before {
@@ -110,15 +109,12 @@ input:checked + .slider:before {
     margin-top: 6px;
 }
 
-
-/* Container for dropdown + button */
 .lang-translation-group {
     display: flex;
     flex-direction: column;
     gap: 8px;
 }
 
-/* Custom Dropdown */
 .custom-dropdown {
     position: relative;
     border: 1px solid #FEB21A;
@@ -134,7 +130,6 @@ input:checked + .slider:before {
     color: #134686;
 }
 
-/* ▼ Arrow */
 .custom-dropdown::after {
     content: "▼";
     font-size: 10px;
@@ -151,7 +146,6 @@ input:checked + .slider:before {
     transform: translateY(-50%) rotate(180deg);
 }
 
-/* Dropdown options */
 .custom-dropdown .options {
     display: none;
     position: absolute;
@@ -181,7 +175,7 @@ input:checked + .slider:before {
 }
 
 .custom-dropdown .options li:hover {
-    background: #FDF4E3; 
+    background: #FDF4E3;
 }
 
 .custom-dropdown .options li.selected {
@@ -201,9 +195,8 @@ input:checked + .slider:before {
 .quick-learning {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
 }
-
 
 button {
     background: #134686;
@@ -222,6 +215,11 @@ button:hover {
     color: #fff;
 }
 
+button i {
+    margin-right: 6px;
+    font-size: 14px;
+    vertical-align: middle;
+}
 
 #funFactsBtn, #quizBtn {
     border: 1px solid #FEB21A;
@@ -237,5 +235,6 @@ button:hover {
 .panelAndRestore {
     display: flex;
     flex-direction: column;
-    gap: 10px;
+    gap: 6px;
 }
+

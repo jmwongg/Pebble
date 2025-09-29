@@ -2,32 +2,39 @@
     position: fixed;
     bottom: 20px;
     right: 20px;
+    width: 280px;
     background: #fff;
-    border: 2px solid #4CAF50;
-    border-radius: 12px;
+    border: 1px solid #FEB21A;
+    border-radius: 10px;
     padding: 10px;
+    box-shadow: 0 4px 12px rgba(0,0,0,0.15);
     font-family: Arial, sans-serif;
-    font-size: 14px;
-    z-index: 999999;
-    width: 250px;
-    box-shadow: 0 2px 8px rgba(0,0,0,0.2);
+    color: #134686;
+    z-index: 9999;
 }
 
-#kids-progress-text {
+.progress-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    font-size: 14px;
     margin-bottom: 6px;
+    font-weight: normal;
+
 }
 
 .bar-container {
     width: 100%;
-    background: #ddd;
-    border-radius: 8px;
+    height: 12px;
+    background: #f0f0f0;
+    border-radius: 6px;
     overflow: hidden;
-    margin-top: 5px;
 }
 
 #kids-progress-bar {
+    height: 100%;
     width: 0%;
-    height: 12px;
-    background: #4CAF50;
-    transition: width 0.2s ease-in-out;
+    background: #134686;
+    border-radius: 6px;
+    transition: width 0.2s ease;
 }
