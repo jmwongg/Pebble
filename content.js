@@ -188,94 +188,90 @@ async function collectRewriteNodes() {
     return nodes;
 }
 
-// Rewrite with caching + batching
 async function rewritePage(level) {
     saveOriginalContent();
-    if (!("Rewriter" in self)) {
-        console.error("Rewriter API not supported in this browser.");
-        return;
-    }
 
-    const availability = await Rewriter.availability();
-    if (availability === "unavailable") {
-        console.error("Rewriter API is unavailable.");
+    if (!("Rewriter" in self) || !("Summarizer" in self)) {
+        console.error("Required APIs not supported in this browser.");
         return;
     }
 
     createProgressUI();
-    updateProgressUI("Collecting text…", 5);
+    updateProgressUI("Collecting text…", 0);
 
     const chunks = await collectRewriteNodes();
-    if (chunks.length === 0) {
+
+    // Filter out tiny/invisible nodes
+    const filteredChunks = chunks.filter(c => {
+        if (!c.text || c.text.length < 50) return false;
+        const style = window.getComputedStyle(c.el.parentNode);
+        if (style.display === "none" || style.visibility === "hidden") return false;
+        return true;
+    });
+
+    if (filteredChunks.length === 0) {
         updateProgressUI("No text found.", 100);
         setTimeout(removeProgressUI, 2000);
         return;
     }
 
-    // Pick contexts based on level
-    let sharedContext, perChunkContext;
+    // Pick context
+    let sharedContext;
     switch (parseInt(level)) {
         case 0:
             sharedContext = "Rewrite text for 7-9 year olds: simple, short, safe, and kid-friendly. Rephrase content naturally so that any violent, sexual, or adult ideas are expressed in a safe, age-appropriate way without losing the main meaning. Remove explicit details from harmful or sensitive content. Replace strong words with gentler ones.";
-            perChunkContext = "Rewrite this text for 7-9 year olds: short, safe, and kid-friendly. Rephrase any violent, sexual, or adult ideas in a safe way, keeping the original meaning clear.";
             break;
         case 1:
             sharedContext = "Rewrite text for 9-11 year olds: clear, simple, safe, and kid-friendly. Express any sensitive content in an age-appropriate way while preserving the main meaning of the text. Remove explicit details from harmful or sensitive content. Replace strong words with gentler ones.";
-            perChunkContext = "Rewrite this text for 9-11 year olds: clear, safe, and kid-friendly. Rephrase sensitive ideas so they are appropriate for kids, without losing meaning.";
             break;
         case 2:
             sharedContext = "Rewrite text for 11+ year olds: clear, slightly detailed, safe, and kid-friendly. Rephrase content naturally so violent, sexual, or adult ideas are expressed in a way that is safe but informative.";
-            perChunkContext = "Rewrite this text for 11+ year olds: clear, slightly detailed, and safe. Rephrase sensitive content naturally so the meaning stays intact.";
             break;
     }
 
-   // Reuse cached rewriter per level
+    // Initialize summarizer
+    const summarizer = await Summarizer.create({ type: "tldr", format: "plain-text", length: "short" });
+    
+    // Initialize rewriter
     if (!cachedRewriters.has(level)) {
         const rewriter = await Rewriter.create({
             tone: "more-casual",
             length: "shorter",
             format: "plain-text",
             sharedContext,
-            monitor(m) {
-                m.addEventListener("downloadprogress", e => {
-                    updateProgressUI(`Downloading model…`, e.loaded * 100);
-                });
-            }
         });
         cachedRewriters.set(level, rewriter);
     }
     const rewriter = cachedRewriters.get(level);
-    const levelLabels = ["Simple", "Intermediate", "Advanced"];
-    console.log(`Rewriting for reading level: ${levelLabels[level]}`);
 
-    // Process in batches but stream inside each batch
-    const batchSize = 5;
-    for (let i = 0; i < chunks.length; i += batchSize) {
-        const batch = chunks.slice(i, i + batchSize);
+    let processed = 0;
 
-        await Promise.all(batch.map(async (c) => {
-            try {
-                const stream = rewriter.rewriteStreaming(c.text, {
-                    context: perChunkContext
-                });
+    for (const c of filteredChunks) {
+        try {
+            // Summarize each chunk first
+            const summary = await summarizer.summarize(c.text, { context: "Summarize this text in plain, clear language, keeping all main points, without simplifying for kids yet."
+            });
 
-                let liveText = "";
-                for await (const piece of stream) {
-                    liveText += piece;
-                    c.el.nodeValue = liveText; // progressive update
-                }
-            } catch (err) {
-                console.error("Rewrite failed:", err);
+            // Rewrite the summarized text
+            const stream = rewriter.rewriteStreaming(summary, { context: sharedContext });
+            let liveText = "";
+            for await (const piece of stream) {
+                liveText += piece;
+                c.el.nodeValue = liveText; // progressive update
             }
-        }));
-
-        const pct = Math.round(((i + batchSize) / chunks.length) * 100);
-        updateProgressUI(`Rewriting…`, pct);
+        } catch (err) {
+            console.warn("Skipping chunk due to error:", err.message);
+        } finally {
+            processed++;
+            updateProgressUI(`Processing…`, Math.round((processed / filteredChunks.length) * 100));
+        }
     }
 
-    updateProgressUI("Rewrite complete!", 100);
+    updateProgressUI("Rewrite + summary complete!", 100);
     setTimeout(removeProgressUI, 2000);
 }
+
+
 
 function saveOriginalContent() {
     const selectors = "p, h1, h2, h3, h4, h5, h6, li, figcaption, blockquote";
